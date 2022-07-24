@@ -30,5 +30,13 @@ class POTLIcons {
   static const IconData potl_arrow_right = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData user = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData potl_add = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData exit = IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData search = IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData camera = IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData location_small = IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData vote_disable = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData vote_enable = IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData potl_location = IconData(0xe813, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData hamburger = IconData(0xe814, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData map_marker_alt = IconData(0xf3c5, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

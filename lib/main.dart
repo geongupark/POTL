@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'util/confing.dart';
 import 'util/POTL_icons.dart';
-import 'home.dart';
-import 'appbar.dart';
-import 'my_page.dart';
+import 'view/home/home.dart';
+import 'view/common/appbar.dart';
+import './view/my_page/my_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -32,9 +32,15 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   PreferredSizeWidget? getAppBarView(BuildContext context, int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return POTLAppBar(context: context);
+        return POTLAppBar(
+          context: context,
+          titleName: null,
+        );
       case 3:
-        return POTLAppBar(context: context);
+        return POTLAppBar(
+          context: context,
+          titleName: "My Page",
+        );
       default:
         return null;
     }
@@ -90,7 +96,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             backgroundColor: Colors.white,
             currentIndex: _selectedIndex,
             elevation: 0.0,
-            selectedItemColor: colorPOTL,
+            selectedItemColor: potlPurple,
             onTap: _onItemTapped,
             type: BottomNavigationBarType.fixed,
           ),

@@ -76,7 +76,7 @@ class _MyPageState extends State<MyPage> {
                             primary: potlBlack,
                           ),
                           onPressed: () {},
-                          child: Text('Text Button'),
+                          child: Text('프로필 편집'),
                         ),
                       ),
                     ],

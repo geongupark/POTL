@@ -4,6 +4,7 @@ import 'util/POTL_icons.dart';
 import 'view/home/home.dart';
 import 'view/common/appbar.dart';
 import './view/my_page/my_page.dart';
+import 'view/post/post.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,11 +36,19 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         return POTLAppBar(
           context: context,
           titleName: null,
+          pageNum: 0,
+        );
+      case 2:
+        return POTLAppBar(
+          context: context,
+          titleName: "게시물 등록",
+          pageNum: 2,
         );
       case 3:
         return POTLAppBar(
           context: context,
-          titleName: "My Page",
+          titleName: "마이 페이지",
+          pageNum: 3,
         );
       default:
         return null;
@@ -51,9 +60,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     Text(
       'Index 1: add post',
     ),
-    Text(
-      'Index 2: my post',
-    ),
+    PostPage(),
     MyPage(),
   ];
 

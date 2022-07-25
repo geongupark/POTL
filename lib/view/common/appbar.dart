@@ -8,10 +8,12 @@ class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
     Key? key,
     required this.context,
     required this.titleName,
+    required this.pageNum,
   }) : super(key: key);
 
   final BuildContext context;
   final String? titleName;
+  final int pageNum;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
       title: Container(
         margin: EdgeInsets.fromLTRB(
             0, MediaQuery.of(context).size.height * 0.02, 0, 0),
-        child: titleName == null
+        child: pageNum == 0
             ? Image.asset(
                 'assets/images/common/POTL.png',
                 height: MediaQuery.of(context).size.height * 0.046,
@@ -31,7 +33,7 @@ class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
                 ),
               ),
       ),
-      actions: titleName == "My Page"
+      actions: pageNum == 3
           ? [
               Theme(
                 data: Theme.of(context).copyWith(

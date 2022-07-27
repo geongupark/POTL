@@ -34,22 +34,41 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.place, color: Colors.black),
-                  Text(
-                    "부산광역시",
-                    style: TextStyle(color: Colors.black, fontSize: 15),
-                  ),
-                  SizedBox(height: 15),
-                  GridView.count(
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    padding: EdgeInsets.all(8),
-                    crossAxisCount: 3,
-                  ),
-                ],
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.place, color: Colors.black),
+                    Text(
+                      "부산광역시",
+                      style: TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+                    SizedBox(height: 15),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        // implement GridView.buildez
+                        child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 200,
+                                    childAspectRatio: 3 / 2,
+                                    crossAxisSpacing: 20,
+                                    mainAxisSpacing: 20),
+                            itemCount: 100,
+                            itemBuilder: (BuildContext ctx, index) {
+                              return Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.amber,
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Text("사진"),
+                              );
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

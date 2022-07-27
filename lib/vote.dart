@@ -32,24 +32,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 45,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: Colors.black,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                      ),
-                    ),
-                  ),
-                  Text("사용자 ID"),
-                ],
-              ),
-            ),
             Stack(
               children: <Widget>[
                 Image.network(
@@ -59,10 +41,27 @@ class _HomePageState extends State<HomePage> {
                   fit: BoxFit.cover,
                 ),
                 Positioned(
-                  bottom: 35,
-                  left: 370,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.arrow_back_ios),
+                        color: Colors.white,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.more_vert),
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 40,
+                  left: 375,
                   child: Text(
-                    "3334",
+                    "176",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -80,13 +79,34 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(color: Colors.white),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(left: 280),
-                        child: Icon(Icons.star_outline, color: Colors.white),
+                        margin: const EdgeInsets.only(left: 270, bottom: 0),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.star_outline, color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
+            ),
+            Container(
+              height: 45,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: Colors.black,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                      ),
+                    ),
+                  ),
+                  Text("사용자 ID"),
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

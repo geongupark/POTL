@@ -28,13 +28,6 @@ class MyPagePost extends StatelessWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(8),
           ),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.grey.withOpacity(0.5),
-          //     blurRadius: 1,
-          //     spreadRadius: 1,
-          //   )
-          // ],
         ),
         child: Stack(
           children: [

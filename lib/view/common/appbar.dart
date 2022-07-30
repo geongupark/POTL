@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:potl/util/POTL_icons.dart';
 import 'package:potl/util/confing.dart';
+import 'package:provider/provider.dart';
 
-class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
+import '../../service/auth_service.dart';
+import 'login.dart';
+
+class POTLAppBar extends StatefulWidget with PreferredSizeWidget {
   const POTLAppBar({
     Key? key,
     required this.context,
@@ -16,24 +20,34 @@ class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
   final int pageNum;
 
   @override
+  State<POTLAppBar> createState() => _POTLAppBarState();
+
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize =>
+      Size.fromHeight(MediaQuery.of(context).size.height * 0.1);
+}
+
+class _POTLAppBarState extends State<POTLAppBar> {
+  @override
   Widget build(BuildContext context) {
     return AppBar(
       title: Container(
         margin: EdgeInsets.fromLTRB(
             0, MediaQuery.of(context).size.height * 0.02, 0, 0),
-        child: pageNum == 0
+        child: widget.pageNum == 0
             ? Image.asset(
                 'assets/images/common/POTL.png',
                 height: MediaQuery.of(context).size.height * 0.046,
               )
             : Text(
-                titleName!,
+                widget.titleName!,
                 style: TextStyle(
                   color: Colors.black,
                 ),
               ),
       ),
-      actions: pageNum == 3
+      actions: widget.pageNum == 3
           ? [
               Theme(
                 data: Theme.of(context).copyWith(
@@ -47,7 +61,11 @@ class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8.0))),
                   onSelected: (item) {
-                    print(item);
+                    if (item == 0) {
+                      context.read<AuthService>().signOut();
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    }
                   },
                   itemBuilder: (context) => [
                     PopupMenuItem(
@@ -73,9 +91,4 @@ class POTLAppBar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: Colors.white,
     );
   }
-
-  @override
-  // TODO: implement preferredSize
-  Size get preferredSize =>
-      Size.fromHeight(MediaQuery.of(context).size.height * 0.1);
 }

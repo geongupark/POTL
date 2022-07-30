@@ -1,114 +1,73 @@
-import 'package:flutter/material.dart';
-import 'util/confing.dart';
-import 'util/POTL_icons.dart';
-import 'view/home/home.dart';
-import 'view/common/appbar.dart';
-import './view/my_page/my_page.dart';
-import 'view/post/post.dart';
+import 'dart:async';
 
-void main() => runApp(const MyApp());
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyStatefulWidget(),
+      title: 'Flutter Google Maps Demo',
+      home: MapSample(),
     );
   }
 }
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
-
+class MapSample extends StatefulWidget {
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  State<MapSample> createState() => MapSampleState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
+class MapSampleState extends State<MapSample> {
+  Completer<GoogleMapController> _controller = Completer();
 
-  PreferredSizeWidget? getAppBarView(BuildContext context, int selectedIndex) {
-    switch (selectedIndex) {
-      case 0:
-        return POTLAppBar(
-          context: context,
-          titleName: null,
-          pageNum: 0,
-        );
-      case 2:
-        return POTLAppBar(
-          context: context,
-          titleName: "게시물 등록",
-          pageNum: 2,
-        );
-      case 3:
-        return POTLAppBar(
-          context: context,
-          titleName: "마이 페이지",
-          pageNum: 3,
-        );
-      default:
-        return null;
-    }
-  }
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
 
-  static const List<Widget> _bodyView = <Widget>[
-    HomePage(),
-    Text(
-      'Index 1: add post',
-    ),
-    PostPage(),
-    MyPage(),
-  ];
+  static final Marker _kGooglePlexMarker = Marker(
+    markerId: MarkerId('_kGooglePlex'),
+    infoWindow: InfoWindow(title: 'Google Plex'),
+    icon: BitmapDescriptor.defaultMarker,
+    position: LatLng(37.42796133580664, -122.085749655962),
+  );
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  static final CameraPosition _kLake = CameraPosition(
+      bearing: 192.8334901395799,
+      target: LatLng(37.43296265331129, -122.08832357078792),
+      tilt: 59.440717697143555,
+      zoom: 19.151926040649414);
+
+  static final Marker _kLakeMarker = Marker(
+    markerId: MarkerId('_kLake'),
+    infoWindow: InfoWindow(title: 'Google Plex'),
+    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+    position: LatLng(37.43296265331129, -122.08832357078792),
+  );
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
-    return SafeArea(
-      child: Scaffold(
-        appBar: getAppBarView(context, _selectedIndex),
-        body: _bodyView[_selectedIndex],
-        bottomNavigationBar: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.087,
-          child: BottomNavigationBar(
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(POTLIcons.home),
-                label: "",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(POTLIcons.map),
-                label: "",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(POTLIcons.potl_add),
-                label: "",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(POTLIcons.user),
-                label: "",
-              ),
-            ],
-            backgroundColor: Colors.white,
-            currentIndex: _selectedIndex,
-            elevation: 0.0,
-            selectedItemColor: potlPurple,
-            onTap: _onItemTapped,
-            type: BottomNavigationBarType.fixed,
-          ),
-        ),
+    return new Scaffold(
+      body: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: _kGooglePlex,
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _goToTheLake,
+        label: Text('To the lake!'),
+        icon: Icon(Icons.directions_boat),
       ),
     );
+  }
+
+  Future<void> _goToTheLake() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
 }

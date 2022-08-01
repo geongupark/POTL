@@ -1,10 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../util/confing.dart';
+
 class AuthService extends ChangeNotifier {
+  final userCollection = FirebaseFirestore.instance.collection("user");
   User? currentUser() {
     // 현재 유저(로그인 되지 않은 경우 null 반환)
     return FirebaseAuth.instance.currentUser;
+  }
+
+  void create(String uid, String nickName) async {
+    // new post 만들기
+    await userCollection.add({
+      'uid': uid,
+      'nick_name': nickName,
+      'profile_image': potlDefaultProfileImage,
+      'voting_posts': [],
+      'warning_posts': [],
+    });
+    notifyListeners(); // 화면 갱신
   }
 
   void signUp({
@@ -29,7 +45,7 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
-
+      create(currentUser()?.uid ?? "", email);
       // 성공 함수 호출
       onSuccess();
     } on FirebaseAuthException catch (e) {

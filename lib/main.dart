@@ -1,102 +1,85 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 200,
-              ),
-              Container(
-                child: Image.asset(
-                  "imgs/logo.png",
-                  height: 150,
-                ),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+      home: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        primary: Colors.black,
-                        side: BorderSide(
-                          color: Colors.black,
-                        ),
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        minimumSize: Size(295, 44),
-                      ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
                       onPressed: () {},
-                      label: Text('Google로 시작하기'),
-                      icon: Icon(Icons.mail),
+                      icon: Icon(Icons.arrow_back_ios),
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "회원가입",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(hintText: "이메일"),
+                  ),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: false, // 비밀번호 안보이게
+                    decoration: InputDecoration(hintText: "비밀번호"),
+                  ),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: "닉네임",
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 45,
+                    margin: EdgeInsets.only(top: 24),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text("가입하기"),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 189, 65, 211),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)),
+                      ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        primary: Colors.white,
-                        side: BorderSide(
-                          color: Colors.black,
-                        ),
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        minimumSize: Size(295, 44),
-                      ),
-                      onPressed: () {},
-                      label: Text('Apple로 시작하기'),
-                      icon: Icon(Icons.apple),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),

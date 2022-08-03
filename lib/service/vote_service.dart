@@ -20,11 +20,6 @@ class VoteService extends ChangeNotifier {
     return userCollection.where("uid", isEqualTo: uid).get();
   }
 
-  // Future<DocumentSnapshot> readTargetUsers(String uid) async {
-  //   // 내 post 가져오기
-  //   return userCollection.doc(uid).get();
-  // }
-
   void updateVoting(int vote, String postId) async {
     // bucket isDone 업데이트
     await postCollection.doc(postId).update({'voting': vote});

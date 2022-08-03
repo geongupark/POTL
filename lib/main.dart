@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:potl/service/auth_service.dart';
 import 'package:potl/service/home_service.dart';
+import 'package:potl/service/my_page_service.dart';
 import 'package:potl/view/common/potl_page.dart';
 import 'package:provider/provider.dart';
 
+import 'service/post_service.dart';
 import 'service/vote_service.dart';
 import 'view/common/login.dart';
 
@@ -17,6 +19,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AuthService()),
         ChangeNotifierProvider(create: (context) => HomeService()),
         ChangeNotifierProvider(create: (context) => VoteService()),
+        ChangeNotifierProvider(create: (context) => PostService()),
+        ChangeNotifierProvider(create: (context) => MyPageService()),
       ],
       child: const MyApp(),
     ),

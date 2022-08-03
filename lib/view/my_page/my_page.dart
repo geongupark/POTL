@@ -1,5 +1,14 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:potl/service/my_page_service.dart';
 import 'package:potl/util/confing.dart';
+import 'package:provider/provider.dart';
+import '../../service/auth_service.dart';
 import 'my_page_post.dart';
 
 class MyPage extends StatefulWidget {
@@ -9,106 +18,234 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  final List<int> votes = [
-    12,
-    20,
-    100,
-    202,
-    57,
-  ];
-
-  final List<String> images = [
-    "https://cdn2.thecatapi.com/images/a9m.jpg",
-    "https://cdn2.thecatapi.com/images/63g.jpg",
-    "https://cdn2.thecatapi.com/images/a3h.jpg",
-    "https://cdn2.thecatapi.com/images/a3h.jpg",
-    "https://cdn2.thecatapi.com/images/aph.jpg",
-  ];
+  bool _editEnable = false;
+  User? _user;
+  File? _image;
+  String _url = "";
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.2,
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.height * 0.025,
-                    0,
-                    MediaQuery.of(context).size.height * 0.025,
-                    0,
-                  ),
-                  width: MediaQuery.of(context).size.height * 0.13,
-                  height: MediaQuery.of(context).size.height * 0.13,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: new DecorationImage(
-                      fit: BoxFit.fill,
-                      image: new NetworkImage(
-                          "https://cdn2.thecatapi.com/images/b6.jpg"),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.053,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "nick name",
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * 0.029,
+    _user = context.read<AuthService>().currentUser();
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    TextEditingController nickNameController = TextEditingController();
+
+    return Consumer<MyPageService>(
+      builder: (context, myPageService, child) {
+        return Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              FutureBuilder<QuerySnapshot>(
+                future: myPageService.readMyInfo(_user?.uid.toString() ?? ""),
+                builder: (context, snapshot) {
+                  final docs = snapshot.data?.docs ?? []; // 문서들 가져오기
+
+                  String? profileImage;
+                  String? nickName;
+                  String? userDocId;
+                  if (docs.isEmpty) {
+                    nickName = "";
+                    profileImage = potlDefaultProfileImage;
+                    userDocId = "";
+                  } else {
+                    docs.forEach((element) {
+                      nickName = element.get("nick_name");
+                      profileImage = element.get("profile_image");
+                      userDocId = element.id;
+                    });
+                  }
+                  nickNameController.text = nickName!;
+
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    child: Row(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(
+                                MediaQuery.of(context).size.height * 0.025,
+                                0,
+                                MediaQuery.of(context).size.height * 0.025,
+                                0,
+                              ),
+                              width: MediaQuery.of(context).size.height * 0.13,
+                              height: MediaQuery.of(context).size.height * 0.13,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: _editEnable && _image != null
+                                      ? FileImage(_image!) as ImageProvider
+                                      : NetworkImage(profileImage!),
+                                ),
+                              ),
+                            ),
+                            _editEnable
+                                ? Positioned(
+                                    bottom: MediaQuery.of(context).size.height *
+                                        0.03,
+                                    left:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                    child: CircleAvatar(
+                                      radius:
+                                          MediaQuery.of(context).size.width *
+                                              0.05,
+                                      backgroundColor:
+                                          Color.fromARGB(150, 196, 49, 216),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          _getProfileImageFromLocal(
+                                              source: ImageSource.gallery);
+                                        },
+                                        icon: Icon(
+                                          Icons.add,
+                                          color: potlWhite,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Text(""),
+                          ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            primary: potlBlack,
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: _editEnable
+                                ? MediaQuery.of(context).size.height * 0.015
+                                : MediaQuery.of(context).size.height * 0.053,
                           ),
-                          onPressed: () {},
-                          child: Text('프로필 편집'),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _editEnable
+                                  ? Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.6,
+                                      child: TextField(
+                                        controller: nickNameController,
+                                      ),
+                                    )
+                                  : Text(
+                                      nickName!,
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.029,
+                                      ),
+                                    ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    primary: potlBlack,
+                                    backgroundColor:
+                                        _editEnable ? potlPurple : potlWhite,
+                                  ),
+                                  onPressed: () {
+                                    if (_editEnable == true) {
+                                      myPageService.updateNickNameUserDoc(
+                                          userDocId!, nickNameController.text);
+                                      if (_image != null) {
+                                        _uploadProfileImageToStorage()
+                                            .then((value) {
+                                          myPageService
+                                              .updateProfileImageUserDoc(
+                                                  userDocId!, _url);
+                                        });
+                                      }
+                                    } else {}
+                                    setState(() {
+                                      _editEnable = !_editEnable;
+                                    });
+                                  },
+                                  child: _editEnable
+                                      ? Text(
+                                          '프로필 편집 완료',
+                                          style: TextStyle(color: potlWhite),
+                                        )
+                                      : Text('프로필 편집'),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            color: potlGrey,
-            height: 10,
-          ),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 5 / 5,
+                      ],
+                    ),
+                  );
+                },
               ),
-              itemCount: images.length,
-              itemBuilder: (context, index) {
-                String imageUrl = images[index];
-                int vote = votes[index];
-                return MyPagePost(
-                  imageUrl: imageUrl,
-                  voteCnt: vote,
-                  index: index,
-                );
-              },
-            ),
+              Container(
+                color: potlGrey,
+                height: 10,
+              ),
+              Expanded(
+                child: FutureBuilder<QuerySnapshot>(
+                  future:
+                      myPageService.readMyPosts(_user?.uid.toString() ?? ""),
+                  builder: (context, snapshot) {
+                    final docs = snapshot.data?.docs ?? []; // 문서들 가져오기
+                    if (docs.isEmpty) {
+                      return Center(child: Text("내 포스트를 작성해주세요 ㅜ"));
+                    }
+                    docs.sort(((a, b) => b
+                        .get("time")
+                        .toDate()
+                        .compareTo(a.get("time").toDate())));
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 5 / 5,
+                      ),
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        final doc = docs[index];
+                        String imageUrl = doc.get("image_url");
+                        int vote = doc.get("voting");
+                        String postId = doc.id;
+                        return MyPagePost(
+                          postId: postId,
+                          imageUrl: imageUrl,
+                          voteCnt: vote,
+                          index: index,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  void _getProfileImageFromLocal({required ImageSource source}) async {
+    final file =
+        await ImagePicker().pickImage(source: source, imageQuality: 10);
+
+    if (file != null) {
+      setState(() {
+        print(file.path);
+        _image = File(file.path);
+      });
+    } else {
+      return;
+    }
+  }
+
+  Future<void> _uploadProfileImageToStorage() async {
+    // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child("profile")
+        .child(_user!.uid.toString() + 'jpg');
+    await ref.putFile(_image!);
+    await ref.getDownloadURL().then((url) {
+      _url = url;
+    });
   }
 }

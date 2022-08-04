@@ -51,18 +51,17 @@ class _HomePageState extends State<HomePage> {
                 child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
-                            childAspectRatio: 3 / 2,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20),
+                            maxCrossAxisExtent: 150,
+                            childAspectRatio: 104 / 90,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10),
                     itemCount: 100,
                     itemBuilder: (BuildContext ctx, index) {
                       return Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Colors.amber,
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Text("사진"),
+                          color: Color.fromRGBO(217, 217, 217, 1),
+                        ),
                       );
                     }),
               ),

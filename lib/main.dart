@@ -1,86 +1,72 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
+void main() {
+  runApp(MyApp());
 }
 
-class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.arrow_back_ios),
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "회원가입",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(hintText: "이메일"),
-                  ),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: false, // 비밀번호 안보이게
-                    decoration: InputDecoration(hintText: "비밀번호"),
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: "닉네임",
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 45,
-                    margin: EdgeInsets.only(top: 24),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text("가입하기"),
-                      style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 189, 65, 211),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                      ),
-                    ),
-                  ),
-                ],
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.place, color: Colors.black),
+                Text(
+                  "부산광역시",
+                  style: TextStyle(color: Colors.black, fontSize: 15),
+                ),
+              ],
+            ),
+            SizedBox(height: 15),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                // implement GridView.buildez
+                child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 150,
+                            childAspectRatio: 104 / 90,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10),
+                    itemCount: 100,
+                    itemBuilder: (BuildContext ctx, index) {
+                      return Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(217, 217, 217, 1),
+                        ),
+                      );
+                    }),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

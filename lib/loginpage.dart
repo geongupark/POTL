@@ -32,11 +32,15 @@ class MyApp extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "회원가입",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      "이메일로 로그인",
+                      style: TextStyle(
+                        fontSize: 22,
+                      ),
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -44,49 +48,54 @@ class MyApp extends StatelessWidget {
                     children: [
                       TextField(
                         decoration: InputDecoration(
-                          labelText: "이메일 주소",
+                          labelText: "아이디",
+                          hintText: "이메일 주소",
                         ),
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 50,
                       ),
                       TextField(
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: "비밀번호",
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: "닉네임",
+                          hintText: "영문, 숫자, 특수문자 조합 8자리 이상",
                         ),
                       ),
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: true,
-                      onChanged: (value) {},
-                    ),
-                    Text("[필수] 만 14세 이상이며 모두 동의합니다."),
-                  ],
+                SizedBox(
+                  height: 15,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Checkbox(
-                      value: true,
-                      onChanged: (value) {},
+                    TextButton(
+                      onPressed: () {},
+                      child: Text('아이디 찾기'),
+                      style: TextButton.styleFrom(
+                        primary: Colors.grey,
+                      ),
                     ),
-                    Text("[선택] 광고성 정보 수신에 모두 동의합니다."),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text('비밀번호 찾기'),
+                      style: TextButton.styleFrom(
+                        primary: Colors.grey,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text('회원가입'),
+                      style: TextButton.styleFrom(
+                        primary: Colors.grey,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
-                  height: 80,
+                  height: 120,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -96,7 +105,7 @@ class MyApp extends StatelessWidget {
                     margin: EdgeInsets.only(top: 24),
                     child: ElevatedButton(
                       onPressed: () {},
-                      child: Text("가입하기"),
+                      child: Text("로그인"),
                       style: ElevatedButton.styleFrom(
                         primary: Color.fromRGBO(196, 49, 216, 1),
                         shape: RoundedRectangleBorder(

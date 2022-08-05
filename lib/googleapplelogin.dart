@@ -43,14 +43,25 @@ class _HomePageState extends State<HomePage> {
                   height: 150,
                 ),
                 SizedBox(
-                  height: 80,
+                  height: 40,
                 ),
                 InkWell(
                   onTap: () {
                     setState(() {});
                   },
                   child: Image.asset(
-                    "imgs/email.png",
+                    "imgs/google.png",
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {});
+                  },
+                  child: Image.asset(
+                    "imgs/apple.png",
                   ),
                 ),
               ],

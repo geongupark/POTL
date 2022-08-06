@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                 height: 10,
               ),
               FutureBuilder<QuerySnapshot>(
-                future: homeService.read(),
+                future: homeService.readAllPostBySorting(),
                 builder: (context, snapshot) {
                   final docs = snapshot.data?.docs ?? []; // 문서들 가져오기
                   final targetDocs = getTargetDocs(docs);

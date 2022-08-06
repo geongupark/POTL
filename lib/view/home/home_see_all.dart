@@ -118,7 +118,7 @@ class _HomeSeeAllPageState extends State<HomeSeeAllPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FutureBuilder<QuerySnapshot>(
-                      future: homeService.read(),
+                      future: homeService.readAllPostBySorting(),
                       builder: (context, snapshot) {
                         final docs = snapshot.data?.docs ?? []; // 문서들 가져오기
                         final targetDocs = getTargetDocs(docs);

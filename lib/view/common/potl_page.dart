@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:potl/view/map/map_page.dart';
 
 import '../../util/POTL_icons.dart';
 import '../../util/confing.dart';
@@ -44,9 +45,7 @@ class _PotlWidgetState extends State<PotlWidget> {
 
   static const List<Widget> _bodyView = <Widget>[
     HomePage(),
-    Text(
-      'Index 1: add post',
-    ),
+    MapPage(title: "map"),
     PostPage(),
     MyPage(),
   ];

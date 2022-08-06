@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/post_service.dart';
+import '../map/search_location.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -66,8 +67,10 @@ class _PostPageState extends State<PostPage> {
                     ),
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => LocationPage(),
-                      ),
+                          builder: (context) => SearchLocation(
+                                title: 'search',
+                              ) // LocationPage(),
+                          ),
                     ),
                     label: Text('위치 추가'),
                     icon: Icon(POTLIcons.location_small),

@@ -10,7 +10,7 @@ class HomeService extends ChangeNotifier {
     return postCollection.orderBy("voting", descending: true).get();
   }
 
-  Future<QuerySnapshot> read() async {
+  Future<QuerySnapshot> readAllPostBySorting() async {
     return postCollection
         .orderBy("voting", descending: true)
         .orderBy("time", descending: true)

@@ -9,7 +9,8 @@ import 'package:potl/service/my_page_service.dart';
 import 'package:potl/util/confing.dart';
 import 'package:provider/provider.dart';
 import '../../service/auth_service.dart';
-import 'my_page_post.dart';
+import '../../util/POTL_icons.dart';
+import '../common/vote.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -178,8 +179,8 @@ class _MyPageState extends State<MyPage> {
                 },
               ),
               Container(
-                color: potlGrey,
-                height: 10,
+                color: potlLightGrey,
+                height: MediaQuery.of(context).size.height * 0.01,
               ),
               Expanded(
                 child: FutureBuilder<QuerySnapshot>(
@@ -203,13 +204,99 @@ class _MyPageState extends State<MyPage> {
                       itemBuilder: (context, index) {
                         final doc = docs[index];
                         String imageUrl = doc.get("image_url");
-                        int vote = doc.get("voting");
+                        int voteCnt = doc.get("voting");
                         String postId = doc.id;
-                        return MyPagePost(
-                          postId: postId,
-                          imageUrl: imageUrl,
-                          voteCnt: vote,
-                          index: index,
+                        // return MyPagePost(
+                        //   postId: postId,
+                        //   imageUrl: imageUrl,
+                        //   voteCnt: voteCnt,
+                        //   index: index,
+                        // );
+                        return Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              left: index % 2 == 0 ? 8 : 0,
+                              right: index % 2 == 1 ? 8 : 0,
+                              top: 8,
+                              bottom: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(
+                                  MaterialPageRoute(
+                                    builder: (context) => VotePage(
+                                      postId: postId,
+                                    ),
+                                  ),
+                                )
+                                    .then((value) {
+                                  setState(() {});
+                                });
+                              },
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(8),
+                                      topRight: Radius.circular(8),
+                                      bottomLeft: Radius.circular(8),
+                                      bottomRight: Radius.circular(8),
+                                    ),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.fill,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          top: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.15),
+                                      color: Color.fromARGB(60, 100, 100, 100),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: MediaQuery.of(context).size.height *
+                                        0.02,
+                                    right: MediaQuery.of(context).size.width *
+                                        0.02,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          voteCnt.toString(),
+                                          style: TextStyle(
+                                            color: potlWhite,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.01,
+                                        ),
+                                        Icon(
+                                          POTLIcons.vote_enable,
+                                          color: potlWhite,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
                         );
                       },
                     );

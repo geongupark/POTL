@@ -65,6 +65,10 @@ class _POTLAppBarState extends State<POTLAppBar> {
                       context.read<AuthService>().signOut();
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) => LoginPage()));
+                    } else if (item == 1) {
+                      context.read<AuthService>().signDown();
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
                     }
                   },
                   itemBuilder: (context) => [
@@ -87,7 +91,7 @@ class _POTLAppBarState extends State<POTLAppBar> {
             ]
           : null,
       centerTitle: true,
-      elevation: 1,
+      elevation: widget.pageNum == 0 ? 0 : 1,
       backgroundColor: Colors.white,
     );
   }

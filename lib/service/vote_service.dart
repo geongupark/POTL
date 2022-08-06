@@ -51,7 +51,26 @@ class VoteService extends ChangeNotifier {
     notifyListeners(); // 화면 갱신
   }
 
-  void delete(String postId) async {
+  void updateWarningUsers(List<dynamic> warningUsers, String postId) async {
+    await postCollection.doc(postId).update({'warning_users': warningUsers});
+    notifyListeners();
+  }
+
+  void updateWarningPosts(List<dynamic> warningPosts, String uid) async {
+    var targetId;
+    await userCollection
+        .where("uid", isEqualTo: uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                targetId = doc.id; //모든 document 정보를 리스트에 저장.
+              })
+            });
+    await userCollection.doc(targetId).update({'warning_posts': warningPosts});
+    notifyListeners();
+  }
+
+  void deletePost(String postId) async {
     // bucket 삭제
     await postCollection.doc(postId).delete();
     notifyListeners(); // 화면 갱신

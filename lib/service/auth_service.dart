@@ -11,14 +11,29 @@ class AuthService extends ChangeNotifier {
     return FirebaseAuth.instance.currentUser;
   }
 
-  void create(String uid, String nickName) async {
-    // new post 만들기
+  void createUser(String uid, String nickName) async {
     await userCollection.add({
       'uid': uid,
       'nick_name': nickName,
       'profile_image': potlDefaultProfileImage,
       'voting_posts': [],
       'warning_posts': [],
+    });
+    notifyListeners(); // 화면 갱신
+  }
+
+  void deleteUser() async {
+    var targetId;
+    await userCollection
+        .where("uid", isEqualTo: currentUser()?.uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                targetId = doc.id; //모든 document 정보를 리스트에 저장.
+              })
+            });
+    await userCollection.doc(targetId).delete().then((temp) {
+      currentUser()?.delete();
     });
     notifyListeners(); // 화면 갱신
   }
@@ -45,7 +60,7 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
-      create(currentUser()?.uid ?? "", email);
+      createUser(currentUser()?.uid ?? "", email);
       // 성공 함수 호출
       onSuccess();
     } on FirebaseAuthException catch (e) {
@@ -94,5 +109,10 @@ class AuthService extends ChangeNotifier {
     // 로그아웃
     await FirebaseAuth.instance.signOut();
     notifyListeners(); // 로그인 상태 변경 알림
+  }
+
+  void signDown() async {
+    deleteUser();
+    notifyListeners();
   }
 }

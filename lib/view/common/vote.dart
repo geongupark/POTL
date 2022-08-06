@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:potl/service/vote_service.dart';
 import 'package:potl/util/POTL_icons.dart';
@@ -30,7 +31,11 @@ class _VotePageState extends State<VotePage> {
               builder: (context, snapshot) {
                 final postDoc = snapshot.data;
                 List<dynamic> votingUsers = postDoc?.get("voting_users") ?? [];
+                List<dynamic> warningUsers =
+                    postDoc?.get("warning_users") ?? [];
                 final isVote = votingUsers.contains(user?.uid);
+                final isWarn = warningUsers.contains(user?.uid);
+                final authorId = postDoc?.get("uid");
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,10 +58,114 @@ class _VotePageState extends State<VotePage> {
                                 icon: Icon(Icons.arrow_back_ios),
                                 color: Colors.white,
                               ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.more_vert),
-                                color: Colors.white,
+                              Theme(
+                                data: Theme.of(context).copyWith(
+                                  dividerTheme: DividerThemeData(
+                                    color: Colors.black,
+                                  ),
+                                  iconTheme: IconThemeData(color: potlGrey),
+                                ),
+                                child: PopupMenuButton<int>(
+                                  color: potlWhite,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0))),
+                                  onSelected: (item) {
+                                    if (item == 0) {
+                                      if (authorId == user?.uid) {
+                                        var warning_posts = [];
+                                        firestore
+                                            .collection("user")
+                                            .where("uid", isEqualTo: user?.uid)
+                                            .get()
+                                            .then((QuerySnapshot qs) {
+                                          qs.docs.forEach((element) {
+                                            warning_posts =
+                                                element.get("warning_posts");
+                                          });
+                                        });
+                                        var voting_posts = [];
+                                        firestore
+                                            .collection("user")
+                                            .where("uid", isEqualTo: user?.uid)
+                                            .get()
+                                            .then((QuerySnapshot qs) {
+                                          qs.docs.forEach((element) {
+                                            voting_posts =
+                                                element.get("voting_posts");
+                                          });
+                                        });
+                                        warning_posts.removeWhere((element) =>
+                                            element == widget.postId);
+                                        voteService.updateWarningPosts(
+                                            warning_posts, user?.uid ?? "");
+                                        voting_posts.removeWhere((element) =>
+                                            element == widget.postId);
+                                        voteService.updateVotingPosts(
+                                            voting_posts, user?.uid ?? "");
+                                        voteService.deletePost(widget.postId);
+                                        _deleteImageFromFireStorage(
+                                            postDoc?.get("image_url"));
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        var warning_posts = [];
+                                        firestore
+                                            .collection("user")
+                                            .where("uid", isEqualTo: user?.uid)
+                                            .get()
+                                            .then((QuerySnapshot qs) {
+                                          qs.docs.forEach((element) {
+                                            warning_posts =
+                                                element.get("warning_posts");
+                                          });
+                                          if (isWarn) {
+                                            voteService.updateWarning(
+                                                postDoc?.get("warning") - 1,
+                                                widget.postId);
+                                            warning_posts.removeWhere(
+                                                (element) =>
+                                                    element == widget.postId);
+                                            voteService.updateWarningPosts(
+                                                warning_posts, user?.uid ?? "");
+                                            warningUsers.removeWhere(
+                                                (element) =>
+                                                    element == user?.uid);
+                                            voteService.updateWarningUsers(
+                                                warningUsers, widget.postId);
+                                          } else {
+                                            voteService.updateWarning(
+                                                postDoc?.get("voting") + 1,
+                                                widget.postId);
+                                            warning_posts.add(widget.postId);
+                                            voteService.updateWarningPosts(
+                                                warning_posts, user?.uid ?? "");
+                                            warningUsers.add(user?.uid);
+                                            voteService.updateWarningUsers(
+                                                warningUsers, widget.postId);
+                                          }
+                                        });
+                                      }
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    authorId == user?.uid
+                                        ? PopupMenuItem(
+                                            value: 0,
+                                            child: Center(
+                                              child: Text('삭제'),
+                                            ),
+                                          )
+                                        : PopupMenuItem(
+                                            value: 0,
+                                            child: Center(
+                                              child: isWarn
+                                                  ? Text('신고취소')
+                                                  : Text('신고하기'),
+                                            ),
+                                          ),
+                                    // PopupMenuDivider(),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -99,31 +208,30 @@ class _VotePageState extends State<VotePage> {
                                       voting_posts =
                                           element.get("voting_posts");
                                     });
+                                    if (isVote) {
+                                      voteService.updateVoting(
+                                          postDoc?.get("voting") - 1,
+                                          widget.postId);
+                                      voting_posts.removeWhere((element) =>
+                                          element == widget.postId);
+                                      voteService.updateVotingPosts(
+                                          voting_posts, user?.uid ?? "");
+                                      votingUsers.removeWhere(
+                                          (element) => element == user?.uid);
+                                      voteService.updateVotingUsers(
+                                          votingUsers, widget.postId);
+                                    } else {
+                                      voteService.updateVoting(
+                                          postDoc?.get("voting") + 1,
+                                          widget.postId);
+                                      voting_posts.add(widget.postId);
+                                      voteService.updateVotingPosts(
+                                          voting_posts, user?.uid ?? "");
+                                      votingUsers.add(user?.uid);
+                                      voteService.updateVotingUsers(
+                                          votingUsers, widget.postId);
+                                    }
                                   });
-
-                                  if (isVote) {
-                                    voteService.updateVoting(
-                                        postDoc?.get("voting") - 1,
-                                        widget.postId);
-                                    voting_posts.removeWhere(
-                                        (element) => element == widget.postId);
-                                    voteService.updateVotingPosts(
-                                        voting_posts, user?.uid ?? "");
-                                    votingUsers.removeWhere(
-                                        (element) => element == user?.uid);
-                                    voteService.updateVotingUsers(
-                                        votingUsers, widget.postId);
-                                  } else {
-                                    voteService.updateVoting(
-                                        postDoc?.get("voting") + 1,
-                                        widget.postId);
-                                    voting_posts.add(widget.postId);
-                                    voteService.updateVotingPosts(
-                                        voting_posts, user?.uid ?? "");
-                                    votingUsers.add(user?.uid);
-                                    voteService.updateVotingUsers(
-                                        votingUsers, widget.postId);
-                                  }
                                 },
                                 icon: isVote
                                     ? Icon(
@@ -217,5 +325,13 @@ class _VotePageState extends State<VotePage> {
         ),
       );
     });
+  }
+
+  Future<void> _deleteImageFromFireStorage(String url) async {
+    try {
+      await FirebaseStorage.instance.refFromURL(url).delete();
+    } catch (e) {
+      print("Error deleting db from cloud: $e");
+    }
   }
 }

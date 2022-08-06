@@ -4,8 +4,27 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isChecked14 = false;
+  bool isChecked = false;
+  bool get isButtonEnabled =>
+      emailText.isNotEmpty &&
+      passwordText.isNotEmpty &&
+      nicknameText.isNotEmpty &&
+      isChecked14;
+  TextEditingController emailCon = TextEditingController();
+  String emailText = '';
+  TextEditingController passwordCon = TextEditingController();
+  String passwordText = '';
+  TextEditingController nicknameCon = TextEditingController();
+  String nicknameText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +62,12 @@ class MyApp extends StatelessWidget {
                   child: Column(
                     children: [
                       TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            emailText = value;
+                          });
+                        },
+                        controller: emailCon,
                         decoration: InputDecoration(
                           labelText: "이메일 주소",
                         ),
@@ -51,6 +76,12 @@ class MyApp extends StatelessWidget {
                         height: 30,
                       ),
                       TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            passwordText = value;
+                          });
+                        },
+                        controller: passwordCon,
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: "비밀번호",
@@ -60,6 +91,12 @@ class MyApp extends StatelessWidget {
                         height: 30,
                       ),
                       TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            nicknameText = value;
+                          });
+                        },
+                        controller: nicknameCon,
                         decoration: InputDecoration(
                           labelText: "닉네임",
                         ),
@@ -70,19 +107,37 @@ class MyApp extends StatelessWidget {
                 Row(
                   children: [
                     Checkbox(
-                      value: true,
-                      onChanged: (value) {},
+                      value: isChecked14,
+                      onChanged: (value) {
+                        setState(() {
+                          isChecked14 = value!;
+                        });
+                      },
+                      checkColor: Colors.white,
+                      activeColor: Color.fromRGBO(217, 217, 217, 1),
+                      side: BorderSide(
+                        color: Color.fromRGBO(217, 217, 217, 1),
+                      ),
                     ),
-                    Text("[필수] 만 14세 이상이며 모두 동의합니다."),
+                    Text("[필수] 만 14세 이상이며 동의합니다."),
                   ],
                 ),
                 Row(
                   children: [
                     Checkbox(
-                      value: true,
-                      onChanged: (value) {},
+                      value: isChecked,
+                      onChanged: (value) {
+                        setState(() {
+                          isChecked = value!;
+                        });
+                      },
+                      checkColor: Colors.white,
+                      activeColor: Color.fromRGBO(217, 217, 217, 1),
+                      side: BorderSide(
+                        color: Color.fromRGBO(217, 217, 217, 1),
+                      ),
                     ),
-                    Text("[선택] 광고성 정보 수신에 모두 동의합니다."),
+                    Text("[선택] 광고성 정보 수신에 동의합니다."),
                   ],
                 ),
                 SizedBox(
@@ -95,10 +150,14 @@ class MyApp extends StatelessWidget {
                     height: 45,
                     margin: EdgeInsets.only(top: 24),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        print(nicknameCon.text.isNotEmpty);
+                      },
                       child: Text("가입하기"),
                       style: ElevatedButton.styleFrom(
-                        primary: Color.fromRGBO(196, 49, 216, 1),
+                        primary: isButtonEnabled
+                            ? Color.fromRGBO(196, 49, 216, 1)
+                            : Color.fromRGBO(217, 217, 217, 1),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0)),
                       ),

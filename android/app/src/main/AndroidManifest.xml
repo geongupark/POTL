@@ -79,7 +79,9 @@
    <application
         android:label="potl"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        
         <!-- TODO: Add your API key here -->
        
         <activity

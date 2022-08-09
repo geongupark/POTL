@@ -206,12 +206,6 @@ class _MyPageState extends State<MyPage> {
                         String imageUrl = doc.get("image_url");
                         int voteCnt = doc.get("voting");
                         String postId = doc.id;
-                        // return MyPagePost(
-                        //   postId: postId,
-                        //   imageUrl: imageUrl,
-                        //   voteCnt: voteCnt,
-                        //   index: index,
-                        // );
                         return Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Container(

@@ -43,9 +43,11 @@ class _PotlWidgetState extends State<PotlWidget> {
     }
   }
 
-  static const List<Widget> _bodyView = <Widget>[
+  static List<Widget> _bodyView = <Widget>[
     HomePage(),
-    MapPage(title: "map"),
+    MapPage(
+      title: 'map',
+    ),
     PostPage(),
     MyPage(),
   ];

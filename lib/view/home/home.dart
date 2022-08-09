@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                                                 POTLIcons.potl_location,
                                               ),
                                               Text(
-                                                ' ${locationName}',
+                                                ' ${locationName.split(" ")[0] + " " + locationName.split(" ")[1]}',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20.0,

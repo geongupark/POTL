@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:potl/service/home_service.dart';
+import 'package:potl/util/POTL_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../common/vote.dart';
@@ -23,28 +24,31 @@ class _MapPageState extends State<MapPage> {
 
   // 이 값은 지도가 시작될 때 첫 번째 위치입니다.
   final CameraPosition _initialPosition = CameraPosition(
-      target: LatLng(35.646451642435444, 127.72239547222853), zoom: 7.0);
+      target: LatLng(35.846451642435444, 127.72239547222853), zoom: 6.9);
 
   // 지도 표시할 장소에 대한 마커 목록
   final List<Marker> markers = [];
 
-  addMarker(cordinate) {
+  addMarker(cordinate, postId) {
     int id = Random().nextInt(100);
     markers.add(
       Marker(
         position: cordinate,
         markerId: MarkerId(id.toString()),
-        // onTap: () => Navigator.of(context)
-        //     .push(
-        //   MaterialPageRoute(
-        //     builder: (context) => VotePage(
-        //       postId: postId,
-        //     ),
-        //   ),
-        // )
-        //     .then((value) {
-        //   setState(() {});
-        // }),
+        onTap: () => Navigator.of(context)
+            .push(
+          MaterialPageRoute(
+            builder: (context) => VotePage(
+              postId: postId,
+            ),
+          ),
+        )
+            .then((value) {
+          setState(() {
+            _controller.animateCamera(CameraUpdate.newLatLng(
+                LatLng(35.646451642435444, 127.72239547222853)));
+          });
+        }),
       ),
     );
   }
@@ -55,9 +59,10 @@ class _MapPageState extends State<MapPage> {
     homeService.readAllPostBySorting().then((QuerySnapshot qs) {
       qs.docs.forEach((element) {
         GeoPoint geo_point = element.get("geo_point");
+        String postId = element.id;
         print(geo_point);
         LatLng latLng = new LatLng(geo_point.latitude, geo_point.longitude);
-        addMarker(latLng);
+        addMarker(latLng, postId);
       });
     });
     return Scaffold(
@@ -76,18 +81,8 @@ class _MapPageState extends State<MapPage> {
         onTap: (cordinate) {
           print("cordinate!!!!!!!!");
           print(cordinate);
-          _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
-          // addMarker(cordinate);
         },
       ),
     );
-
-    // floatingActionButton 클릭시 줌 아웃
-    // floatingActionButton: FloatingActionButton(
-    //   onPressed: () {
-    //     _controller.animateCamera(CameraUpdate.zoomOut());
-    //   },
-    //   child: Icon(Icons.zoom_out),
-    // ));
   }
 }

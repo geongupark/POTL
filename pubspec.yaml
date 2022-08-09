@@ -44,6 +44,7 @@ dependencies:
   firebase_storage: ^10.3.4
   google_maps_flutter: ^2.1.10
   kpostal: ^0.5.1
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

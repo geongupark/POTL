@@ -9,3 +9,4 @@ Color potlMidGrey = Color.fromARGB(255, 138, 138, 141);
 
 String potlDefaultProfileImage =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png";
+String textAddingLocation = "위치 추가";

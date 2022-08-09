@@ -11,7 +11,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/post_service.dart';
-import '../map/search_location.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -21,12 +20,14 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  String? _locationName;
   File? _image;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User? _user;
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   String _url = "";
+  String _locationName = textAddingLocation;
+  double _latitude = 0.0;
+  double _longtitude = 0.0;
 
   @override
   void initState() {
@@ -43,196 +44,230 @@ class _PostPageState extends State<PostPage> {
     final postService = context.read<PostService>();
     return SafeArea(
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.035,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.065,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      primary: potlGrey,
-                      side: BorderSide(
-                        color: potlGrey,
-                      ),
-                      backgroundColor: potlWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => SearchLocation(
-                                title: 'search',
-                              ) // LocationPage(),
-                          ),
-                    ),
-                    label: Text('위치 추가'),
-                    icon: Icon(POTLIcons.location_small),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.035,
-            ),
-            _image != null
-                ? Stack(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.width * 0.001,
-                          0,
-                          MediaQuery.of(context).size.width * 0.001,
-                          0,
+        child: Container(
+          color: potlWhite,
+          child: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.035,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.065,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        primary: potlGrey,
+                        side: BorderSide(
+                          color: potlGrey,
                         ),
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child: Image.file(
-                          _image!,
-                          fit: BoxFit.cover,
+                        backgroundColor: _locationName == textAddingLocation
+                            ? potlWhite
+                            : potlPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      Positioned(
-                        bottom: MediaQuery.of(context).size.height * 0.1,
-                        left: MediaQuery.of(context).size.width * 0.32,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              primary: potlBlack,
-                              side: BorderSide(color: potlGrey),
-                              backgroundColor:
-                                  Color.fromARGB(170, 196, 49, 216),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(31.0),
-                              ),
+                      onPressed: () => Navigator.of(context)
+                          .push(
+                        MaterialPageRoute(
+                            builder: (context) => LocationPage(
+                                  title: 'search',
+                                ) // LocationPage(),
                             ),
-                            onPressed: () {
-                              _getPostImageFromLocal(
-                                  source: ImageSource.gallery);
-                            },
-                            label: Text(
-                              '사진 바꾸기',
-                              style: TextStyle(
+                      )
+                          .then((result) {
+                        setState(() {
+                          _latitude = result["latitude"];
+                          _longtitude = result["longtitude"];
+                          _locationName = result["locationName"] == ""
+                              ? textAddingLocation
+                              : result["locationName"];
+                        });
+                      }),
+                      label: Text(
+                        _locationName,
+                        style: TextStyle(
+                            color: _locationName == textAddingLocation
+                                ? potlGrey
+                                : potlWhite),
+                      ),
+                      icon: Icon(
+                        POTLIcons.location_small,
+                        color: _locationName == textAddingLocation
+                            ? potlGrey
+                            : potlWhite,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.035,
+              ),
+              _image != null
+                  ? Stack(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.width * 0.001,
+                            0,
+                            MediaQuery.of(context).size.width * 0.001,
+                            0,
+                          ),
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: MediaQuery.of(context).size.height * 0.1,
+                          left: MediaQuery.of(context).size.width * 0.32,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                primary: potlBlack,
+                                side: BorderSide(color: potlGrey),
+                                backgroundColor:
+                                    Color.fromARGB(170, 196, 49, 216),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(31.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                _getPostImageFromLocal(
+                                    source: ImageSource.gallery);
+                              },
+                              label: Text(
+                                '사진 바꾸기',
+                                style: TextStyle(
+                                  color: potlWhite,
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.add,
                                 color: potlWhite,
                               ),
                             ),
-                            icon: Icon(
-                              Icons.add,
-                              color: potlWhite,
-                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                : Stack(
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        color: potlLightGrey,
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        top: MediaQuery.of(context).size.height * 0.13,
-                        bottom: 0,
-                        child: Column(
-                          children: [
-                            Icon(
-                              POTLIcons.camera,
-                              color: potlGrey,
-                              size: MediaQuery.of(context).size.width * 0.089,
-                            ),
-                            SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.015,
-                            ),
-                            Text(
-                              "인물 사진을 올려주세요 :)",
-                              style: TextStyle(
-                                color: potlGrey,
-                              ),
-                            ),
-                            Text(
-                              "풍경, 음식, 동물 등 사람이 포함되지 않을 경우",
-                              style: TextStyle(
-                                color: potlGrey,
-                              ),
-                            ),
-                            Text(
-                              "삭제 조치됨을 알려드립니다.",
-                              style: TextStyle(
-                                color: potlGrey,
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.06,
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.05,
-                              child: OutlinedButton.icon(
-                                style: OutlinedButton.styleFrom(
-                                  primary: potlBlack,
-                                  side: BorderSide(color: potlBlack),
-                                  backgroundColor: potlWhite,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(31.0),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  _getPostImageFromLocal(
-                                      source: ImageSource.gallery);
-                                },
-                                label: Text('사진 추가하기'),
-                                icon: Icon(Icons.add),
-                              ),
-                            ),
-                          ],
+                      ],
+                    )
+                  : Stack(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          color: potlLightGrey,
                         ),
-                      ),
-                    ],
-                  ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.035,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.065,
-              // alignment: Alignment.center,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  primary: _image == null ? potlGrey : potlWhite,
-                  side: BorderSide(
-                    color: potlWhite,
-                  ),
-                  backgroundColor: _image == null ? potlLightGrey : potlPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                onPressed: _image == null
-                    ? null
-                    : () {
-                        setState(() {
-                          _uploadPostImageToStorage().then((value) {
-                            postService.create(
-                                _user!.uid, _url, GeoPoint(2, 2), "test");
-                          });
-                          _image = null;
-                        });
-                      },
-                child: Text('등록하기'),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: MediaQuery.of(context).size.height * 0.13,
+                          bottom: 0,
+                          child: Column(
+                            children: [
+                              Icon(
+                                POTLIcons.camera,
+                                color: potlGrey,
+                                size: MediaQuery.of(context).size.width * 0.089,
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.015,
+                              ),
+                              Text(
+                                "인물 사진을 올려주세요 :)",
+                                style: TextStyle(
+                                  color: potlGrey,
+                                ),
+                              ),
+                              Text(
+                                "풍경, 음식, 동물 등 사람이 포함되지 않을 경우",
+                                style: TextStyle(
+                                  color: potlGrey,
+                                ),
+                              ),
+                              Text(
+                                "삭제 조치됨을 알려드립니다.",
+                                style: TextStyle(
+                                  color: potlGrey,
+                                ),
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                              ),
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                child: OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    primary: potlBlack,
+                                    side: BorderSide(color: potlBlack),
+                                    backgroundColor: potlWhite,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(31.0),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _getPostImageFromLocal(
+                                        source: ImageSource.gallery);
+                                  },
+                                  label: Text('사진 추가하기'),
+                                  icon: Icon(Icons.add),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.035,
               ),
-            ),
-          ],
+              Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.065,
+                // alignment: Alignment.center,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    primary: _image == null ? potlGrey : potlWhite,
+                    side: BorderSide(
+                      color: potlWhite,
+                    ),
+                    backgroundColor:
+                        _image == null ? potlLightGrey : potlPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed:
+                      _image == null || _locationName == textAddingLocation
+                          ? null
+                          : () {
+                              setState(() {
+                                _uploadPostImageToStorage().then((value) {
+                                  postService.create(
+                                      _user!.uid,
+                                      _url,
+                                      GeoPoint(_latitude, _longtitude),
+                                      _locationName);
+                                });
+                                _image = null;
+                                _locationName = textAddingLocation;
+                              });
+                            },
+                  child: Text('등록하기'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'service/post_service.dart';
 import 'service/vote_service.dart';
-import 'view/common/login.dart';
+import 'view/login/login_main.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // main 함수에서 async 사용하기 위함
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
     final user = context.read<AuthService>().currentUser();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: user == null ? LoginPage() : PotlWidget(),
+      home: user == null ? LoginMain() : PotlWidget(),
     );
   }
 }

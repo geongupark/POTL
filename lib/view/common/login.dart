@@ -91,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     authService.signUp(
                       email: emailController.text,
                       password: passwordController.text,
+                      nick_name: "test",
                       onSuccess: () {
                         // 회원가입 성공
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

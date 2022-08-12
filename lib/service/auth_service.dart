@@ -41,6 +41,7 @@ class AuthService extends ChangeNotifier {
   void signUp({
     required String email, // 이메일
     required String password, // 비밀번호
+    required String nick_name,
     required Function onSuccess, // 가입 성공시 호출되는 함수
     required Function(String err) onError, // 에러 발생시 호출되는 함수
   }) async {
@@ -52,6 +53,9 @@ class AuthService extends ChangeNotifier {
     } else if (password.isEmpty) {
       onError("비밀번호를 입력해 주세요.");
       return;
+    } else if (nick_name.isEmpty) {
+      onError("닉네임을 입력해 주세요.");
+      return;
     }
 
     // firebase auth 회원 가입
@@ -60,7 +64,7 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
-      createUser(currentUser()?.uid ?? "", email);
+      createUser(currentUser()?.uid ?? "", nick_name);
       // 성공 함수 호출
       onSuccess();
     } on FirebaseAuthException catch (e) {

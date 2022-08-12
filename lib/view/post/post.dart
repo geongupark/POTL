@@ -237,12 +237,17 @@ class _PostPageState extends State<PostPage> {
                 // alignment: Alignment.center,
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    primary: _image == null ? potlGrey : potlWhite,
+                    primary:
+                        _image == null || _locationName == textAddingLocation
+                            ? potlGrey
+                            : potlWhite,
                     side: BorderSide(
                       color: potlWhite,
                     ),
                     backgroundColor:
-                        _image == null ? potlLightGrey : potlPurple,
+                        _image == null || _locationName == textAddingLocation
+                            ? potlLightGrey
+                            : potlPurple,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -251,17 +256,18 @@ class _PostPageState extends State<PostPage> {
                       _image == null || _locationName == textAddingLocation
                           ? null
                           : () {
-                              setState(() {
-                                _uploadPostImageToStorage().then((value) {
-                                  postService.create(
-                                      _user!.uid,
-                                      _url,
-                                      GeoPoint(_latitude, _longtitude),
-                                      _locationName);
+                              _uploadPostImageToStorage().then((value) {
+                                postService.create(
+                                    _user!.uid,
+                                    _url,
+                                    GeoPoint(_latitude, _longtitude),
+                                    _locationName);
+                                setState(() {
+                                  _image = null;
+                                  _locationName = textAddingLocation;
                                 });
-                                _image = null;
-                                _locationName = textAddingLocation;
                               });
+                              // setState(() {});
                             },
                   child: Text('등록하기'),
                 ),

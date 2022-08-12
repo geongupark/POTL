@@ -119,6 +119,7 @@ class _LocationPageState extends State<LocationPage> {
                   });
                 });
               },
+              myLocationButtonEnabled: false,
             ),
             Align(
               alignment: Alignment.topCenter,

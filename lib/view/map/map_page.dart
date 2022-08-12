@@ -1,11 +1,9 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:potl/service/home_service.dart';
-import 'package:potl/util/POTL_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../common/vote.dart';
@@ -56,33 +54,52 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     final homeService = context.read<HomeService>();
-    homeService.readAllPostBySorting().then((QuerySnapshot qs) {
-      qs.docs.forEach((element) {
-        GeoPoint geo_point = element.get("geo_point");
-        String postId = element.id;
-        print(geo_point);
-        LatLng latLng = new LatLng(geo_point.latitude, geo_point.longitude);
-        addMarker(latLng, postId);
-      });
-    });
-    return Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: _initialPosition,
-
-        mapType: MapType.normal,
-        onMapCreated: (controller) {
-          setState(() {
-            _controller = controller;
+    // future builde
+    // homeService.readAllPostBySorting().then((QuerySnapshot qs) {
+    //   qs.docs.forEach((element) {
+    //     GeoPoint geo_point = element.get("geo_point");
+    //     String postId = element.id;
+    //     print(geo_point);
+    //     LatLng latLng = new LatLng(geo_point.latitude, geo_point.longitude);
+    //     addMarker(latLng, postId);
+    //   });
+    // });
+    return FutureBuilder<QuerySnapshot>(
+        future: homeService.readAllPostBySorting(),
+        builder: (context, snapshot) {
+          snapshot.data?.docs.forEach((element) {
+            GeoPoint geo_point = element.get("geo_point");
+            String postId = element.id;
+            print(geo_point);
+            LatLng latLng = new LatLng(geo_point.latitude, geo_point.longitude);
+            addMarker(latLng, postId);
           });
-        },
-        markers: markers.toSet(),
+          if (!snapshot.hasData) {
+            return Container(
+              alignment: Alignment(0.0, 0.0),
+              child: CircularProgressIndicator.adaptive(),
+            );
+          } else {
+            return Scaffold(
+              body: GoogleMap(
+                initialCameraPosition: _initialPosition,
 
-        // 클릭한 위치가 중앙에 표시
-        onTap: (cordinate) {
-          print("cordinate!!!!!!!!");
-          print(cordinate);
-        },
-      ),
-    );
+                mapType: MapType.normal,
+                onMapCreated: (controller) {
+                  setState(() {
+                    _controller = controller;
+                  });
+                },
+                markers: markers.toSet(),
+                myLocationButtonEnabled: false,
+                // 클릭한 위치가 중앙에 표시
+                onTap: (cordinate) {
+                  print("cordinate!!!!!!!!");
+                  print(markers);
+                },
+              ),
+            );
+          }
+        });
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:potl/util/POTL_icons.dart';
 import 'package:potl/util/confing.dart';
+import 'package:potl/view/login/login_main.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/auth_service.dart';
@@ -54,9 +55,13 @@ class _POTLAppBarState extends State<POTLAppBar> {
                   dividerTheme: DividerThemeData(
                     color: Colors.black,
                   ),
-                  iconTheme: IconThemeData(color: potlGrey),
+                  iconTheme: IconThemeData(color: potlBlack),
                 ),
                 child: PopupMenuButton<int>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: potlGrey,
+                  ),
                   color: potlWhite,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8.0))),
@@ -64,11 +69,11 @@ class _POTLAppBarState extends State<POTLAppBar> {
                     if (item == 0) {
                       context.read<AuthService>().signOut();
                       Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                          MaterialPageRoute(builder: (context) => LoginMain()));
                     } else if (item == 1) {
                       context.read<AuthService>().signDown();
                       Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                          MaterialPageRoute(builder: (context) => LoginMain()));
                     }
                   },
                   itemBuilder: (context) => [

@@ -6,7 +6,6 @@ import 'package:potl/view/login/login_main.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/auth_service.dart';
-import 'login.dart';
 
 class POTLAppBar extends StatefulWidget with PreferredSizeWidget {
   const POTLAppBar({

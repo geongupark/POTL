@@ -109,6 +109,10 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  void setPasswordByEmail({required String email}) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
   void signOut() async {
     // 로그아웃
     await FirebaseAuth.instance.signOut();

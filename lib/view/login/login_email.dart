@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:potl/util/confing.dart';
+import 'package:potl/view/login/login_set_password_by_email.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/auth_service.dart';
 import '../common/potl_page.dart';
 import 'login_email_signup.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 
 class LoginEmail extends StatefulWidget {
   const LoginEmail({Key? key}) : super(key: key);
@@ -15,6 +18,16 @@ class LoginEmail extends StatefulWidget {
 class _LoginEmailState extends State<LoginEmail> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  DateTime _tappedTime = DateTime.now();
+
+  @override
+  void dispose() {
+    Loader.hide();
+    print("Called dispose");
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthService>(
@@ -82,14 +95,11 @@ class _LoginEmailState extends State<LoginEmail> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        child: Text('아이디 찾기'),
-                        style: TextButton.styleFrom(
-                          primary: Colors.grey,
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => LoginSetPasswordByEmail(),
+                          ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
                         child: Text('비밀번호 찾기'),
                         style: TextButton.styleFrom(
                           primary: Colors.grey,
@@ -126,32 +136,40 @@ class _LoginEmailState extends State<LoginEmail> {
                       margin: EdgeInsets.only(top: 24),
                       child: ElevatedButton(
                         onPressed: () {
-                          // 로그인
-                          authService.signIn(
-                            email: emailController.text,
-                            password: passwordController.text,
-                            onSuccess: () {
-                              // 로그인 성공
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text("로그인 성공"),
-                              ));
+                          if (DateTime.now()
+                                  .difference(_tappedTime)
+                                  .inMilliseconds >
+                              buttonTime) {
+                            _tappedTime = DateTime.now();
+                            Loader.show(context);
+                            // 로그인
+                            authService.signIn(
+                              email: emailController.text,
+                              password: passwordController.text,
+                              onSuccess: () {
+                                // 로그인 성공
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text("로그인 성공"),
+                                ));
 
-                              // HomePage로 이동
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PotlWidget()),
-                              );
-                            },
-                            onError: (err) {
-                              // 에러 발생
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text(err),
-                              ));
-                            },
-                          );
+                                // HomePage로 이동
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PotlWidget()),
+                                );
+                              },
+                              onError: (err) {
+                                // 에러 발생
+                                Loader.hide();
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(err),
+                                ));
+                              },
+                            );
+                          }
                         },
                         child: Text("로그인"),
                         style: ElevatedButton.styleFrom(

@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/post_service.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -28,6 +29,9 @@ class _PostPageState extends State<PostPage> {
   String _locationName = textAddingLocation;
   double _latitude = 0.0;
   double _longtitude = 0.0;
+  bool _isTappedAddImage = false;
+  DateTime _tappedAddImage = DateTime.now();
+  DateTime _tappedUpload = DateTime.now();
 
   @override
   void initState() {
@@ -37,6 +41,14 @@ class _PostPageState extends State<PostPage> {
 
   void _prepareService() async {
     _user = await FirebaseAuth.instance.currentUser;
+  }
+
+  @override
+  void dispose() {
+    Loader.hide();
+    print("Called dispose");
+
+    super.dispose();
   }
 
   @override
@@ -216,8 +228,14 @@ class _PostPageState extends State<PostPage> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    _getPostImageFromLocal(
-                                        source: ImageSource.gallery);
+                                    if (DateTime.now()
+                                            .difference(_tappedAddImage)
+                                            .inMilliseconds >
+                                        buttonTime) {
+                                      _tappedAddImage = DateTime.now();
+                                      _getPostImageFromLocal(
+                                          source: ImageSource.gallery);
+                                    }
                                   },
                                   label: Text('사진 추가하기'),
                                   icon: Icon(Icons.add),
@@ -256,17 +274,26 @@ class _PostPageState extends State<PostPage> {
                       _image == null || _locationName == textAddingLocation
                           ? null
                           : () {
-                              _uploadPostImageToStorage().then((value) {
-                                postService.create(
-                                    _user!.uid,
-                                    _url,
-                                    GeoPoint(_latitude, _longtitude),
-                                    _locationName);
-                                setState(() {
-                                  _image = null;
-                                  _locationName = textAddingLocation;
+                              if (DateTime.now()
+                                      .difference(_tappedUpload)
+                                      .inMilliseconds >
+                                  buttonTime) {
+                                _tappedUpload = DateTime.now();
+                                Loader.show(context);
+                                _uploadPostImageToStorage().then((value) {
+                                  postService.create(
+                                      _user!.uid,
+                                      _url,
+                                      GeoPoint(_latitude, _longtitude),
+                                      _locationName);
+                                  setState(() {
+                                    _image = null;
+                                    _locationName = textAddingLocation;
+                                  });
+                                  Loader.hide();
                                 });
-                              });
+                              }
+
                               // setState(() {});
                             },
                   child: Text('등록하기'),

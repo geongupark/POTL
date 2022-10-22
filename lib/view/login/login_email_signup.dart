@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:potl/service/auth_service.dart';
+import 'package:potl/util/confing.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 
 class LoginEmailSignup extends StatefulWidget {
   const LoginEmailSignup({Key? key}) : super(key: key);
@@ -23,6 +25,15 @@ class _LoginEmailSignupState extends State<LoginEmailSignup> {
   String passwordText = '';
   TextEditingController nicknameController = TextEditingController();
   String nicknameText = '';
+  DateTime _tappedJoin = DateTime.now();
+
+  @override
+  void dispose() {
+    Loader.hide();
+    print("Called dispose");
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,26 +162,34 @@ class _LoginEmailSignupState extends State<LoginEmailSignup> {
                         onPressed: () {
                           if (isButtonEnabled) {
                             // 회원가입
-                            authService.signUp(
-                              email: emailController.text,
-                              password: passwordController.text,
-                              nick_name: nicknameController.text,
-                              onSuccess: () {
-                                // 회원가입 성공
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text("회원가입 성공"),
-                                ));
-                                Navigator.of(context).pop();
-                              },
-                              onError: (err) {
-                                // 에러 발생
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(err),
-                                ));
-                              },
-                            );
+                            if (DateTime.now()
+                                    .difference(_tappedJoin)
+                                    .inMilliseconds >
+                                buttonTime) {
+                              _tappedJoin = DateTime.now();
+                              Loader.show(context);
+                              authService.signUp(
+                                email: emailController.text,
+                                password: passwordController.text,
+                                nick_name: nicknameController.text,
+                                onSuccess: () {
+                                  // 회원가입 성공
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text("회원가입 성공"),
+                                  ));
+                                  Navigator.of(context).pop();
+                                },
+                                onError: (err) {
+                                  // 에러 발생
+                                  Loader.hide();
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(err),
+                                  ));
+                                },
+                              );
+                            }
                           }
                         },
                         child: Text("가입하기"),

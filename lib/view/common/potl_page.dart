@@ -105,13 +105,15 @@ class _PotlWidgetState extends State<PotlWidget> {
 
   Future<bool> _onBackPressed() {
     DateTime now = DateTime.now();
-    if (now.difference(currentBackPressTime) > Duration(milliseconds: 2000)) {
+    if (now.difference(currentBackPressTime) > Duration(milliseconds: 1800)) {
       currentBackPressTime = now;
       final _msg = '뒤로 버튼 한 번 더 누르면 종료됩니다.';
-      final snackBar = SnackBar(content: Text(_msg));
+      final snackBar = SnackBar(
+          duration: const Duration(milliseconds: 1800), content: Text(_msg));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return Future.value(false);
     }
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return Future.value(true);
   }
 }

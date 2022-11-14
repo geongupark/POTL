@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "665897220336",
+    "project_id": "potl-5025d",
+    "storage_bucket": "potl-5025d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665897220336:android:f829fe33ab41d42ad8ea35",
+        "android_client_info": {
+          "package_name": "com.example.potl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665897220336-pmqor7q4hgtrf8e9alntqp2cdnv381kt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBet3OXBZJ8iEh1E1iJDC81bheJ1xRBOfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665897220336-pmqor7q4hgtrf8e9alntqp2cdnv381kt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

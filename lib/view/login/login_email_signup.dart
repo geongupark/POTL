@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:potl/service/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginEmailSignup extends StatefulWidget {
   const LoginEmailSignup({Key? key}) : super(key: key);
@@ -113,12 +115,34 @@ class _LoginEmailSignupState extends State<LoginEmailSignup> {
                           });
                         },
                         checkColor: Colors.white,
-                        activeColor: Color.fromRGBO(217, 217, 217, 1),
+                        activeColor: Color.fromRGBO(196, 49, 216, 1),
                         side: BorderSide(
                           color: Color.fromRGBO(217, 217, 217, 1),
                         ),
                       ),
-                      Text("[필수] 만 14세 이상이며 개인정보 처리방침에 동의합니다."),
+                      RichText(
+                        text: new TextSpan(
+                          children: [
+                            new TextSpan(
+                              text: '[필수] 만 14세 이상이며 ',
+                              style: new TextStyle(color: Colors.black),
+                            ),
+                            new TextSpan(
+                              text: '개인정보 처리방침',
+                              style: new TextStyle(color: Colors.blue),
+                              recognizer: new TapGestureRecognizer()
+                                ..onTap = () {
+                                  launch(
+                                      'https://transparent-kettledrum-94e.notion.site/POTL-4dd9e135a3c943f6b5e0ffc31a6a9820');
+                                },
+                            ),
+                            new TextSpan(
+                              text: '에 동의합니다.',
+                              style: new TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -131,7 +155,7 @@ class _LoginEmailSignupState extends State<LoginEmailSignup> {
                           });
                         },
                         checkColor: Colors.white,
-                        activeColor: Color.fromRGBO(217, 217, 217, 1),
+                        activeColor: Color.fromRGBO(196, 49, 216, 1),
                         side: BorderSide(
                           color: Color.fromRGBO(217, 217, 217, 1),
                         ),

@@ -35,9 +35,9 @@ class _HomePageState extends State<HomePage> {
       builder: (context, homeService, chihld) {
         return Container(
           color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 height: MediaQuery.of(context).size.height * 0.05,
